@@ -25,3 +25,17 @@ Watchman.benchmark("time.to.wake.up") do
   puts "Wake up"
 end
 ```
+
+## Global metric prefix
+
+If you want to prepend all the metric names with a prefix, do the following:
+
+``` ruby
+Watchman.prefix = "production.server1"
+```
+
+Then, all your metrics will be saved with that prefix. For example:
+
+``` ruby
+Watchman.submit("high.score", 100) # => production.server1.high.score = 100
+```
