@@ -10,6 +10,13 @@ gem 'watchman'
 
 ## Usage
 
+First, set up the host and the port of the metrics server:
+
+``` ruby
+Watchman.host = "localhost"
+Watchman.port = 22345
+```
+
 To submit a simple value from your service:
 
 ``` ruby

@@ -1,5 +1,6 @@
 require "watchman/version"
 require "benchmark"
+require "socket"
 
 module Watchman
   module_function
@@ -8,6 +9,22 @@ module Watchman
 
   def prefix=(value)
     @prefix = value
+  end
+
+  def host=(host)
+    @host = host
+  end
+
+  def host
+    @host
+  end
+
+  def port=(port)
+    @port = port
+  end
+
+  def port
+    @port
   end
 
   def submit(name, value)
