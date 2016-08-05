@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'watchman/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "watchman"
+  spec.name          = "rt-watchman"
   spec.version       = Watchman::VERSION
   spec.authors       = ["Rendered Text"]
   spec.email         = ["devops@renderedtext.com"]
