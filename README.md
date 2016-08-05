@@ -5,7 +5,7 @@ Watchman is your friend who monitors your processes so you don't have to.
 ## Installation
 
 ``` ruby
-gem 'watchman'
+gem "rt-watchman", :require => "watchman"
 ```
 
 ## Usage
