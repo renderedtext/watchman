@@ -29,7 +29,7 @@ describe Watchman::Store do
 
       sleep 1
 
-      expect(@received_message).to eq("test.value|40")
+      expect(@received_message).to eq("test.value:40|g")
     end
   end
 
