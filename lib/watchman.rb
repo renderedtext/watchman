@@ -1,34 +1,20 @@
 require "watchman/version"
 require "benchmark"
-require "socket"
+require "statsd"
 
 module Watchman
-  module_function
+  extend self
 
-  require_relative "watchman/store"
+  attr_accessor :prefix
+  attr_accessor :host
+  attr_accessor :port
 
-  def prefix=(value)
-    @prefix = value
-  end
-
-  def host=(host)
-    @host = host
-  end
-
-  def host
-    @host
-  end
-
-  def port=(port)
-    @port = port
-  end
-
-  def port
-    @port
+  def statsd_client
+    @client ||= Statsd.new(@host, @port)
   end
 
   def submit(name, value)
-    Watchman::Store.save(metric_name_with_prefix(name), value)
+    statsd_client.gauge(metric_name_with_prefix(name), value)
   end
 
   def benchmark(name)
@@ -38,7 +24,7 @@ module Watchman
       result = yield
     end
 
-    submit(name, (time.real * 1000).floor)
+    statsd_client.timing(metric_name_with_prefix(name), (time.real * 1000).floor)
 
     result
   end
