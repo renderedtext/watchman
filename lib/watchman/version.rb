@@ -1,3 +1,3 @@
-module Watchman
-  VERSION = "0.3.0"
+class Watchman
+  VERSION = "0.4.0"
 end
