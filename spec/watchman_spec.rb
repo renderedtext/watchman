@@ -22,6 +22,22 @@ describe Watchman do
 
       expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:30|g")
     end
+
+    context "a ':timing' type was passed" do
+      it "sends a timing value to the server" do
+        Watchman.submit("age.of.kittens", 30, :timing)
+
+        sleep 1
+
+        expect(@test_server.recvfrom(200).first).to eq("prod.age.of.kittens:30|ms")
+      end
+    end
+
+    context "an unrecognized type was passed" do
+      it "raises an exception" do
+        expect { Watchman.submit("age.of.kittens", 30, :hahha) }.to raise_exception(Watchman::SubmitTypeError)
+      end
+    end
   end
 
   describe ".benchmark" do

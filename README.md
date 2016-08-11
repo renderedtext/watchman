@@ -33,6 +33,12 @@ Watchman.benchmark("time.to.wake.up") do
 end
 ```
 
+To submit a time value in miliseconds:
+
+``` ruby
+Watchman.submit("number.of.kittens", 30, :timing)
+```
+
 ## Global metric prefix
 
 If you want to prepend all the metric names with a prefix, do the following:
