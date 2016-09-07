@@ -40,6 +40,26 @@ describe Watchman do
     end
   end
 
+  describe ".increment" do
+    it "increments the value of a metric" do
+      Watchman.increment("number.of.kittens")
+
+      sleep 1
+
+      expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:1|c")
+    end
+  end
+
+  describe ".decrement" do
+    it "decrements the value of a metric" do
+      Watchman.decrement("number.of.kittens")
+
+      sleep 1
+
+      expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:-1|c")
+    end
+  end
+
   describe ".benchmark" do
     it "measures the execution of the method in miliseconds" do
       Watchman.benchmark("sleep.time") do

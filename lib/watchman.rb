@@ -11,9 +11,12 @@ class Watchman
     attr_accessor :port
 
     def submit(name, value, type = :gauge)
+      metric = metric_name_with_prefix(name)
+
       case type
-      when :gauge   then statsd_client.gauge(metric_name_with_prefix(name), value)
-      when :timing  then statsd_client.timing(metric_name_with_prefix(name), value)
+      when :gauge  then statsd_client.gauge(metric, value)
+      when :timing then statsd_client.timing(metric, value)
+      when :count  then statsd_client.count(metric, value)
       else raise SubmitTypeError.new("Submit type '#{type}' is not recognized")
       end
     end
@@ -28,6 +31,14 @@ class Watchman
       submit(name, (time.real * 1000).floor, :timing)
 
       result
+    end
+
+    def increment(name)
+      submit(name, 1, :count)
+    end
+
+    def decrement(name)
+      submit(name, -1, :count)
     end
 
     private
