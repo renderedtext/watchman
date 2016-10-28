@@ -52,3 +52,14 @@ Then, all your metrics will be saved with that prefix. For example:
 ``` ruby
 Watchman.submit("high.score", 100) # => production.server1.high.score = 100
 ```
+
+## Test mode for Watchman
+
+In tests you can set the following:
+
+``` ruby
+Watchman.test_mode = true
+```
+
+That way watchman will use a stubbed client, and won't send any data to the
+metric server.
