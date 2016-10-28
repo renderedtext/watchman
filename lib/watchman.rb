@@ -1,4 +1,5 @@
 require "watchman/version"
+require "watchman/mock_statsd"
 require "benchmark"
 require "statsd"
 
@@ -9,6 +10,7 @@ class Watchman
     attr_accessor :prefix
     attr_accessor :host
     attr_accessor :port
+    attr_accessor :test_mode
 
     def submit(name, value, type = :gauge)
       metric = metric_name_with_prefix(name)
@@ -44,7 +46,11 @@ class Watchman
     private
 
     def statsd_client
-      @client ||= Statsd.new(@host, @port)
+      if @test_mode == true
+        Watchman::MockStatsd.new
+      else
+        @client ||= Statsd.new(@host, @port)
+      end
     end
 
     def metric_name_with_prefix(name)
