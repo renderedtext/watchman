@@ -47,7 +47,7 @@ class Watchman
       @client ||= Statsd.new(@host, @port)
     end
 
-     def metric_name_with_prefix(name)
+    def metric_name_with_prefix(name)
       if @prefix
         "#{@prefix}.#{name}"
       else
