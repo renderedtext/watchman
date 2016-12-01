@@ -20,65 +20,55 @@ describe Watchman do
 
       sleep 1
 
-      expect(@test_server.recvfrom(200).first).to eq("tagged.prod.no_tag.no_tag.no_tag.number.of.kittens:30|g")
+      expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:30|g")
     end
 
     context "a ':timing' type was passed" do
       it "sends a timing value to the server" do
-        Watchman.submit("age.of.kittens", 30, type: :timing)
+        Watchman.submit("age.of.kittens", 30, :timing)
 
         sleep 1
 
-        expect(@test_server.recvfrom(200).first).to eq("tagged.prod.no_tag.no_tag.no_tag.age.of.kittens:30|ms")
+        expect(@test_server.recvfrom(200).first).to eq("prod.age.of.kittens:30|ms")
       end
     end
 
     context "an unrecognized type was passed" do
       it "raises an exception" do
-        expect { Watchman.submit("age.of.kittens", 30, type: :hahha) }.to raise_exception(Watchman::SubmitTypeError)
-      end
-    end
-
-    context "a tag was passed" do
-      it "sends the value to statsd server" do
-        Watchman.submit("number.of.kittens", 30, tags: ["mytag"])
-
-        sleep 1
-
-        expect(@test_server.recvfrom(200).first).to eq("tagged.prod.mytag.no_tag.no_tag.number.of.kittens:30|g")
+        expect { Watchman.submit("age.of.kittens", 30, :hahha) }.to raise_exception(Watchman::SubmitTypeError)
       end
     end
   end
 
   describe ".increment" do
     it "increments the value of a metric" do
-      Watchman.increment("number.of.kittens", tags: ["mytag"])
+      Watchman.increment("number.of.kittens")
 
       sleep 1
 
-      expect(@test_server.recvfrom(200).first).to eq("tagged.prod.mytag.no_tag.no_tag.number.of.kittens:1|c")
+      expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:1|c")
     end
   end
 
   describe ".decrement" do
     it "decrements the value of a metric" do
-      Watchman.decrement("number.of.kittens", tags: ["mytag"])
+      Watchman.decrement("number.of.kittens")
 
       sleep 1
 
-      expect(@test_server.recvfrom(200).first).to eq("tagged.prod.mytag.no_tag.no_tag.number.of.kittens:-1|c")
+      expect(@test_server.recvfrom(200).first).to eq("prod.number.of.kittens:-1|c")
     end
   end
 
   describe ".benchmark" do
     it "measures the execution of the method in miliseconds" do
-      Watchman.benchmark("sleep.time", tags: ["mytag"]) do
+      Watchman.benchmark("sleep.time") do
         sleep 1
       end
 
       sleep 1
 
-      expect(@test_server.recvfrom(200).first).to match(/tagged\.prod\.mytag\.no_tag\.no_tag\.sleep\.time\:10\d\d|md/)
+      expect(@test_server.recvfrom(200).first).to match(/prod\.sleep\.time\:10\d\d|md/)
     end
   end
 end
