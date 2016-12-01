@@ -25,7 +25,7 @@ describe Watchman do
 
     context "a ':timing' type was passed" do
       it "sends a timing value to the server" do
-        Watchman.submit("age.of.kittens", 30, :timing)
+        Watchman.submit("age.of.kittens", 30, type: :timing)
 
         sleep 1
 
@@ -35,13 +35,13 @@ describe Watchman do
 
     context "an unrecognized type was passed" do
       it "raises an exception" do
-        expect { Watchman.submit("age.of.kittens", 30, :hahha) }.to raise_exception(Watchman::SubmitTypeError)
+        expect { Watchman.submit("age.of.kittens", 30, type: :hahha) }.to raise_exception(Watchman::SubmitTypeError)
       end
     end
 
     context "a tag was passed" do
       it "sends the value to statsd server" do
-        Watchman.submit("number.of.kittens", 30, :gauge, ["mytag"])
+        Watchman.submit("number.of.kittens", 30, tags: ["mytag"])
 
         sleep 1
 
@@ -52,7 +52,7 @@ describe Watchman do
 
   describe ".increment" do
     it "increments the value of a metric" do
-      Watchman.increment("number.of.kittens", ["mytag"])
+      Watchman.increment("number.of.kittens", tags: ["mytag"])
 
       sleep 1
 
@@ -62,7 +62,7 @@ describe Watchman do
 
   describe ".decrement" do
     it "decrements the value of a metric" do
-      Watchman.decrement("number.of.kittens", ["mytag"])
+      Watchman.decrement("number.of.kittens", tags: ["mytag"])
 
       sleep 1
 
@@ -72,7 +72,7 @@ describe Watchman do
 
   describe ".benchmark" do
     it "measures the execution of the method in miliseconds" do
-      Watchman.benchmark("sleep.time", ["mytag"]) do
+      Watchman.benchmark("sleep.time", tags: ["mytag"]) do
         sleep 1
       end
 
