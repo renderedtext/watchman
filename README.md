@@ -36,7 +36,7 @@ end
 To submit a time value in miliseconds:
 
 ``` ruby
-Watchman.submit("number.of.kittens", 30, type: :timing)
+Watchman.submit("number.of.kittens", 30, :timing)
 ```
 
 ## Tags
@@ -50,9 +50,14 @@ Watchman.submit("user.#{id}", 30)
 Use tags. A list of tags is an optional last parameter of `:submit`, `:benchmark`,
 `:increment` and `:decrement` methods.
 
+For example:
+
 ``` ruby
-Watchman.submit("user", 30, tags: ["#{id}"])
+Watchman.submit("user", 30, :gauge, ["#{id}"])
 ```
+
+(Note that `:submit` has a `type` parameter with a default value of `:gauge`
+before the `tags_list` parameter)
 
 Tags list is limited to 3 values.
 

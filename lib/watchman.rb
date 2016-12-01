@@ -12,11 +12,8 @@ class Watchman
     attr_accessor :port
     attr_accessor :test_mode
 
-    def submit(name, value, args = {})
-      type = args[:type] || :gauge
-      tags = args[:tags] || []
-
-      metric = metric_name_with_prefix(name, tags)
+    def submit(name, value, type = :gauge, tags_list = [])
+      metric = metric_name_with_prefix(name, tags_list)
 
       case type
       when :gauge  then statsd_client.gauge(metric, value)
@@ -26,30 +23,24 @@ class Watchman
       end
     end
 
-    def benchmark(name, args = {})
-      tags = args[:tags] || []
-
+    def benchmark(name, tags_list = [])
       result = nil
 
       time = Benchmark.measure do
         result = yield
       end
 
-      submit(name, (time.real * 1000).floor, type: :timing, tags: tags)
+      submit(name, (time.real * 1000).floor, :timing, tags_list)
 
       result
     end
 
-    def increment(name, args = {})
-      tags = args[:tags] || []
-
-      submit(name, 1, type: :count, tags: tags)
+    def increment(name, tags_list = [])
+      submit(name, 1, :count, tags_list)
     end
 
-    def decrement(name, args = {})
-      tags = args[:tags] || []
-
-      submit(name, -1, type: :count, tags: tags)
+    def decrement(name, tags_list = [])
+      submit(name, -1, :count, tags_list)
     end
 
     private
@@ -62,18 +53,18 @@ class Watchman
       end
     end
 
-    def metric_name_with_prefix(name, tags)
+    def metric_name_with_prefix(name, tags_list)
       full_name = []
       full_name << "tagged"
       full_name << @prefix if @prefix
-      full_name << tags_string(tags)
+      full_name << tags(tags_list)
       full_name << name
       full_name.join(".")
     end
 
-    def tags_string(tags)
-      tags
-        .fill("no_tag", tags.length, [3 - tags.length, 0].max)
+    def tags(tags_list)
+      tags_list
+        .fill("no_tag", tags_list.length, [3 - tags_list.length, 0].max)
         .first(3)
         .join(".")
     end
