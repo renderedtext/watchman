@@ -17,7 +17,18 @@ Watchman.host = "localhost"
 Watchman.port = 22345
 ```
 
-To submit a simple value from your service:
+To submit a value to statsd from your service use:
+
+``` ruby
+Watchman.submit(name, value, type)
+```
+
+Available types:
+* :gauge `default`
+* :timing
+* :count
+
+Submitting a simple gauge value from your service would look like:
 
 ``` ruby
 Watchman.submit("number.of.kittens", 30)
@@ -33,11 +44,34 @@ Watchman.benchmark("time.to.wake.up") do
 end
 ```
 
-To submit a time value in miliseconds:
+To submit a time value in milliseconds use:
 
 ``` ruby
 Watchman.submit("number.of.kittens", 30, :timing)
 ```
+
+To submit a count value use:
+
+``` ruby
+# To increse:
+Watchman.increment("number.of.kittens")
+
+# or decrese:
+Watchman.decrement("number.of.kittens")
+```
+
+Alternatively you can use:
+
+``` ruby
+# To increse:
+Watchman.submit("number.of.kittens", 1, :count)
+
+# or decrese:
+Watchman.submit("number.of.kittens", -1, :count)
+```
+
+to achieve the equivalent effect, with the added possibility of tweaking the
+value.
 
 ## Global metric prefix
 
