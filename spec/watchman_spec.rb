@@ -38,6 +38,46 @@ describe Watchman do
         expect { Watchman.submit("age.of.kittens", 30, :hahha) }.to raise_exception(Watchman::SubmitTypeError)
       end
     end
+
+    describe "tags" do
+      it "sends tags to the server" do
+        Watchman.submit("age.of.kittens", 30, :timing, :tags => ["a", "b", "c"])
+
+        sleep 1
+
+        expect(@test_server.recvfrom(200).first).to eq("tagged.prod.a.b.c.age.of.kittens:30|ms")
+      end
+
+      context "less than 3 tags are passed" do
+        it "fills the rest of the places with 'no_tag'" do
+          Watchman.submit("age.of.kittens", 30, :timing, :tags => ["a"])
+
+          sleep 1
+
+          expect(@test_server.recvfrom(200).first).to eq("tagged.prod.a.no_tag.no_tag.age.of.kittens:30|ms")
+        end
+      end
+
+      context "more than 3 tags are passed" do
+        it "sends only three tags" do
+          Watchman.submit("age.of.kittens", 30, :timing, :tags => [1, 2, 3, 4, 5])
+
+          sleep 1
+
+          expect(@test_server.recvfrom(200).first).to eq("tagged.prod.1.2.3.age.of.kittens:30|ms")
+        end
+      end
+    end
+  end
+
+  describe ".timing" do
+    it "sends timing value" do
+      Watchman.timing("speed.of.kittens", 30)
+
+      sleep 1
+
+      expect(@test_server.recvfrom(200).first).to eq("prod.speed.of.kittens:30|ms")
+    end
   end
 
   describe ".increment" do

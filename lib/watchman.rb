@@ -1,4 +1,5 @@
 require "watchman/version"
+require "watchman/metric_name"
 require "watchman/mock_statsd"
 require "benchmark"
 require "statsd"
@@ -12,8 +13,32 @@ class Watchman
     attr_accessor :port
     attr_accessor :test_mode
 
-    def submit(name, value, type = :gauge)
-      metric = metric_name_with_prefix(name)
+    def benchmark(name, options = {})
+      result = nil
+
+      time = Benchmark.measure do
+        result = yield
+      end
+
+      timing(name, (time.real * 1000).floor, options)
+
+      result
+    end
+
+    def timing(name, value, options = {})
+      submit(name, value, :timing, options)
+    end
+
+    def increment(name, options = {})
+      submit(name, 1, :count, options)
+    end
+
+    def decrement(name, options = {})
+      submit(name, -1, :count, options)
+    end
+
+    def submit(name, value, type = :gauge, options = {})
+      metric = Watchman::MetricName.construct(name, prefix, options[:tags])
 
       case type
       when :gauge  then statsd_client.gauge(metric, value)
@@ -23,26 +48,6 @@ class Watchman
       end
     end
 
-    def benchmark(name)
-      result = nil
-
-      time = Benchmark.measure do
-        result = yield
-      end
-
-      submit(name, (time.real * 1000).floor, :timing)
-
-      result
-    end
-
-    def increment(name)
-      submit(name, 1, :count)
-    end
-
-    def decrement(name)
-      submit(name, -1, :count)
-    end
-
     private
 
     def statsd_client
@@ -50,14 +55,6 @@ class Watchman
         Watchman::MockStatsd.new
       else
         @client ||= Statsd.new(@host, @port)
-      end
-    end
-
-    def metric_name_with_prefix(name)
-      if @prefix
-        "#{@prefix}.#{name}"
-      else
-        name
       end
     end
   end
