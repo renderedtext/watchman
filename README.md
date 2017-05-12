@@ -73,6 +73,23 @@ Watchman.submit("number.of.kittens", -1, :count)
 to achieve the equivalent effect, with the added possibility of tweaking the
 value.
 
+## Tags
+
+If you want to use a variable that changes often, don't use this:
+
+``` ruby
+Watchman.submit("user.#{id}", 30)
+```
+
+Use tags. A list of tags is an optional last parameter of `:submit`, `:benchmark`,
+`:increment` and `:decrement` methods.
+
+``` ruby
+Watchman.submit("user", 30, tags: [id])
+```
+
+Tags list is limited to 3 values.
+
 ## Global metric prefix
 
 If you want to prepend all the metric names with a prefix, do the following:
