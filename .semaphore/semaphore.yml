@@ -5,10 +5,12 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: 'Block #1'
+  - name: RSpec
     task:
       jobs:
-        - name: 'Job #1'
+        - name: Run specs
           commands:
-            - echo "a" > a.txt
-            - artifact push workflow a.txt
+            - checkout
+            - sem-version ruby 2.6.0
+            - bundle install --path vendor/bundle
+            - bundle exec rspec
