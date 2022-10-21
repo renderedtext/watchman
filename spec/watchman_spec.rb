@@ -70,6 +70,33 @@ describe Watchman do
     end
   end
 
+  describe ".submitfiltering" do
+    before(:all) do
+      Watchman.do_filter = true
+    end
+    
+    after(:all) do
+      Watchman.do_filter = false
+    end
+
+    it "filters out metrics if option external not provided" do
+      Watchman.submit("age.of.kittens", 30, :timing, {external: true})
+
+      sleep 1
+
+      expect(@test_server.recvfrom(200).first).to eq("prod.age.of.kittens:30|ms")
+      
+      Watchman.submit("age.of.dogs", 10, :timing)
+      Watchman.submit("age.of.kittens", 30, :timing, {external: true})
+
+      sleep 1
+
+      # should not see age.of.dogs recieved
+      expect(@test_server.recvfrom(200).first).to eq("prod.age.of.kittens:30|ms")
+    end
+    
+  end
+
   describe ".timing" do
     it "sends timing value" do
       Watchman.timing("speed.of.kittens", 30)
