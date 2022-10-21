@@ -12,6 +12,7 @@ class Watchman
     attr_accessor :host
     attr_accessor :port
     attr_accessor :test_mode
+    attr_accessor :do_filter
 
     def benchmark(name, options = {})
       result = nil
@@ -38,6 +39,8 @@ class Watchman
     end
 
     def submit(name, value, type = :gauge, options = {})
+      return if skip?(options)
+
       metric = Watchman::MetricName.construct(name, prefix, options[:tags])
 
       case type
@@ -49,6 +52,10 @@ class Watchman
     end
 
     private
+
+    def skip?(options)
+      @do_filter && !options[:external]
+    end
 
     def statsd_client
       if @test_mode == true

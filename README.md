@@ -104,6 +104,20 @@ Then, all your metrics will be saved with that prefix. For example:
 Watchman.submit("high.score", 100) # => production.server1.high.score = 100
 ```
 
+## Filtering metrics
+
+If you want to filter metrics based on some condition, do the foloowing:
+
+```ruby
+Watchman.do_filter = true
+```
+
+Then none of the metrics without options flag ```external``` will be ignored and 
+only metrics like the following will be sent out:
+```ruby
+Watchman.submit("number.of.puppies", 3, :gauge, {external: true})
+```
+
 ## Test mode for Watchman
 
 In tests you can set the following:
