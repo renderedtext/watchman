@@ -1,5 +1,5 @@
 class Watchman
-  class MetricName
+  class TaggedMetricName
     def self.construct(base_name, prefix, tags)
       new(base_name, prefix, tags).construct
     end

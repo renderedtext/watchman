@@ -1,8 +1,9 @@
 require "watchman/version"
-require "watchman/metric_name"
+require "watchman/tagged_metric_name"
+require "watchman/untagged_metric_name"
 require "watchman/mock_statsd"
 require "benchmark"
-require "statsd"
+require "datadog/statsd"
 
 class Watchman
   class SubmitTypeError < RuntimeError; end
@@ -13,6 +14,7 @@ class Watchman
     attr_accessor :port
     attr_accessor :test_mode
     attr_accessor :do_filter
+    attr_accessor :external_backend
 
     def benchmark(name, options = {})
       result = nil
@@ -41,12 +43,20 @@ class Watchman
     def submit(name, value, type = :gauge, options = {})
       return if skip?(options)
 
-      metric = Watchman::MetricName.construct(name, prefix, options[:tags])
+      meetric = ""
+      tags = []
+      if @external_backend == :aws_cloudwatch
+        metric = Watchman::UntaggedMetricName.construct(name, prefix)
+        tags = options[:tags]
+      else
+        metric = Watchman::TaggedMetricName.construct(name, prefix, options[:tags])
+        tags = []
+      end
 
       case type
-      when :gauge  then statsd_client.gauge(metric, value)
-      when :timing then statsd_client.timing(metric, value)
-      when :count  then statsd_client.count(metric, value)
+      when :gauge  then statsd_client.gauge(metric, value, tags: tags)
+      when :timing then statsd_client.timing(metric, value, tags: tags)
+      when :count  then statsd_client.count(metric, value, tags: tags)
       else raise SubmitTypeError.new("Submit type '#{type}' is not recognized")
       end
     end
@@ -61,7 +71,7 @@ class Watchman
       if @test_mode == true
         Watchman::MockStatsd.new
       else
-        @client ||= Statsd.new(@host, @port)
+        @client ||= Datadog::Statsd.new(@host, @port, single_thread: true, buffer_max_pool_size: 1)
       end
     end
   end

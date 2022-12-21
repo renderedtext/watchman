@@ -3,9 +3,9 @@ class Watchman
 
     # Used in test environments
 
-    def gauge(metric, value); end
-    def timing(metric, value); end
-    def count(metric, value); end
+    def gauge(metric, value, tags = {}); end
+    def timing(metric, value, tags = {}); end
+    def count(metric, value, tags = {}); end
 
   end
 end
