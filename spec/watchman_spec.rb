@@ -97,6 +97,24 @@ describe Watchman do
     
   end
 
+  describe ".cloudwatch_backend" do
+    before(:all) do
+      Watchman.external_backend = :aws_cloudwatch
+    end
+    
+    after(:all) do
+      Watchman.external_backend = nil 
+    end
+
+    it "formats tags at the end of the metric for cloudwatch, less than 3 tags" do
+      Watchman.submit("age.of.kittens", 30, :timing, :tags => ["tag:a"])
+
+      sleep 1
+
+      expect(@test_server.recvfrom(200).first).to eq("prod.age.of.kittens:30|ms|#tag:a")
+    end
+  end
+
   describe ".timing" do
     it "sends timing value" do
       Watchman.timing("speed.of.kittens", 30)

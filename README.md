@@ -90,6 +90,12 @@ Watchman.submit("user", 30, tags: [id])
 
 Tags list is limited to 3 values.
 
+## Tags for datadog/cloudwatch
+In case you want your metrics to be formated with cloudwatch style taggs, you need to provide tags
+in this style
+``` ruby
+Watchman.submit("age.of.kittens", 30, :timing, :tags => ["tag:a"])
+```
 ## Global metric prefix
 
 If you want to prepend all the metric names with a prefix, do the following:
