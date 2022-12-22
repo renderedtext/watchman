@@ -71,7 +71,7 @@ class Watchman
       if @test_mode == true
         Watchman::MockStatsd.new
       else
-        @client ||= Datadog::Statsd.new(@host, @port, single_thread: true, buffer_max_pool_size: 1)
+        @client ||= Datadog::Statsd.new(@host, @port, single_thread: true, buffer_max_pool_size: 1, telemetry_enable: false)
       end
     end
   end
