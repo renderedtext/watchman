@@ -6,8 +6,8 @@ require 'watchman/version'
 Gem::Specification.new do |spec|
   spec.name          = "rt-watchman"
   spec.version       = Watchman::VERSION
-  spec.authors       = ["Rendered Text"]
-  spec.email         = ["devops@renderedtext.com"]
+  spec.authors       = ["Semaphore Technologies doo"]
+  spec.email         = ["devs@renderedtext.com"]
 
   spec.summary       = %q{Watches your cloud}
   spec.license       = "MIT"
