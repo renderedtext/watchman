@@ -134,3 +134,7 @@ Watchman.test_mode = true
 
 That way watchman will use a stubbed client, and won't send any data to the
 metric server.
+
+## License
+
+This software is licensed under [the Apache 2.0 license](LICENSE).
